@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 '''Day one of Advent of Code'''
+from collections import defaultdict
 import os
 import time
 
@@ -15,7 +16,7 @@ second_array = []
 with open(input_file_path,encoding='utf-8') as input_file:
   lines = [line for line in input_file]
   first_array = [int(line[0:5]) for line in lines]
-  second_array = [int(line[8:]) for line in lines]
+  second_array = [int(line[-5:]) for line in lines]
 
 first_array.sort()
 second_array.sort()
@@ -36,8 +37,14 @@ print('Elapsed time for part one: ' + str(elapsed_time_in_milliseconds))
 # --- Part Two
 start_time = time.time()
 
-multiplied_numbers = [number * second_array.count(number)
-                      for number in first_array]
+multiplied_numbers = []
+
+count_dict = defaultdict(int)
+for num in second_array:
+  count_dict[num] += 1
+
+for num in first_array:
+  multiplied_numbers.append(num * count_dict[num])
 
 similarity_score = sum(multiplied_numbers)
 
