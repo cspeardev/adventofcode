@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 '''Day one of Advent of Code'''
-import collections
 import os
 import time
 
+# --- Part One
 start_time = time.time()
 
 script_dir = os.path.dirname(__file__)
