@@ -5,7 +5,7 @@ import time
 
 start_time = time.time()
 
-def get_index_of_lowest(array:[])-> int:
+def get_index_of_lowest(array:list[int])-> int:
   lowest_index = 0
   lowest = array[lowest_index]
   for i in enumerate(array):
