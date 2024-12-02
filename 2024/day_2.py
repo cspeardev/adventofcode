@@ -3,8 +3,38 @@
 import os
 import time
 
+def is_reading_set_safe(reading_set: list[int]) -> bool:
+  is_safe = True
+  if len(reading_set) == 1:
+    return is_safe
+  last_value:int = reading_set[0]
 
-# --- Part Two
+  increasing = False
+  decreasing = False
+
+  if reading_set[0] < reading_set[1]:
+    increasing = True
+  elif reading_set[0] > reading_set[1]:
+    decreasing = True
+  else:
+    return False
+
+  for reading in reading_set[1:]:
+    diff = reading - last_value
+
+    if (increasing and diff < 1
+        or decreasing and diff > -1
+        or diff == 0):
+      return False
+
+    diff = abs(diff)
+    if not 1 <= diff <= 3:
+      return False
+    last_value = reading
+  return is_safe
+
+
+# --- Part One
 # Data sets are safe if values are all descending or all ascending and the
 # difference between each value is between 1 and 3. Solution is to find the
 # count of all readings that are safe.
@@ -20,46 +50,28 @@ with open(input_file_path,encoding='utf-8') as input_file:
   lines = [line.strip() for line in input_file]
   readings = [[int(value) for value in str.split(line,' ')] for line in lines]
 
-safe_count = 0
-
-for reading in readings:
-  is_safe = True
-  if len(reading) == 1:
-    break
-  last_value:int = reading[0]
-
-  increasing = False
-  decreasing = False
-
-  if reading[0] < reading[1]:
-    increasing = True
-  elif reading[0] > reading[1]:
-    decreasing = True
-  else:
-    continue
-
-  for value in reading[1:]:
-
-    diff = value - last_value
-
-    if (increasing and diff < 1
-        or decreasing and diff > -1
-        or diff == 0):
-      is_safe = False
-      break
-
-    diff = abs(diff)
-    if not 1 <= diff <= 3:
-      is_safe = False
-      break
-    last_value = value
-
-  if is_safe:
-    safe_count += 1
-
+safe_count = sum(is_reading_set_safe(reading) for reading in readings.copy())
 print(f"Solution for part one is {safe_count}")
 
 end_time = time.time()
 elapsed_time = end_time - start_time
 elapsed_time_in_milliseconds = elapsed_time * 1000
 print('Elapsed time for part one: ' + str(elapsed_time_in_milliseconds))
+
+# --- Part Two
+# Same logic as above, however need to implement a 'Problem Dampener', which
+# allows for a single bad reading in a set.
+start_time = time.time()
+
+safe_count = sum(is_reading_set_safe(reading)
+                 or any(is_reading_set_safe([v for i,
+                                             v in enumerate(reading) if i != j])
+                                             for j in range(len(reading)))
+                                             for reading in readings)
+
+print(f"Solution for part two is {safe_count}")
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+elapsed_time_in_milliseconds = elapsed_time * 1000
+print('Elapsed time for part two: ' + str(elapsed_time_in_milliseconds))
