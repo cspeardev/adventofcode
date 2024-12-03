@@ -13,8 +13,6 @@ start_time = time.time()
 script_dir = os.path.dirname(__file__)
 input_file_path = script_dir + '/input/3'
 
-memory=''
-
 with open(input_file_path,encoding='utf-8') as input_file:
   memory = '\n'.join([line.strip() for line in input_file])
 
@@ -30,3 +28,32 @@ end_time = time.time()
 elapsed_time = end_time - start_time
 elapsed_time_in_milliseconds = elapsed_time * 1000
 print('Elapsed time for part one: ' + str(elapsed_time_in_milliseconds))
+
+# --- Part Two
+# Same as above but identify 'do' or 'don't' in memory before operations
+
+search_regex = r'(do\(\)|don\'t\(\))|mul\((\d*)\,(\d*)\)'
+
+matches = regex.findall(search_regex,memory)
+
+active = True
+solution = 0
+
+for match in matches:
+  if match[0]:
+    if match[0] == 'do()':
+      active = True
+      continue
+    elif match[0] == 'don\'t()':
+      active = False
+      continue
+  else:
+    if active:
+      solution += int(match[1])*int(match[2])
+
+print (f'Solution for part two is: {solution}')
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+elapsed_time_in_milliseconds = elapsed_time * 1000
+print('Elapsed time for part two: ' + str(elapsed_time_in_milliseconds))
