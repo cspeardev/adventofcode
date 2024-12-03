@@ -39,17 +39,12 @@ matches = regex.findall(search_regex,memory)
 active = True
 solution = 0
 
-for match in matches:
-  if match[0]:
-    if match[0] == 'do()':
-      active = True
-      continue
-    elif match[0] == 'don\'t()':
-      active = False
-      continue
+for match_type, value1, value2 in matches:
+  if match_type:
+    active = match_type == 'do()'
   else:
     if active:
-      solution += int(match[1])*int(match[2])
+      solution += int(value1) * int(value2)
 
 print (f'Solution for part two is: {solution}')
 
