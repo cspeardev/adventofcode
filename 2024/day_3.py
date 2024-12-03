@@ -16,11 +16,11 @@ input_file_path = script_dir + '/input/3'
 with open(input_file_path,encoding='utf-8') as input_file:
   memory = '\n'.join([line.strip() for line in input_file])
 
-search_regex = r'\bmul\b\((\d*)\,(\d*)\)'
+search_regex = r'mul\((\d{1,3})\,(\d{1,3})\)'
 
 matches = regex.findall(search_regex,memory)
 
-solution = sum([int(pair[0]) * int(pair[1]) for pair in matches ])
+solution = sum([int(val1) * int(val2) for val1,val2 in matches ])
 
 print (f'Solution for part one is: {solution}')
 
@@ -32,7 +32,7 @@ print('Elapsed time for part one: ' + str(elapsed_time_in_milliseconds))
 # --- Part Two
 # Same as above but identify 'do' or 'don't' in memory before operations
 
-search_regex = r'(do\(\)|don\'t\(\))|mul\((\d*)\,(\d*)\)'
+search_regex = r'(do\(\)|don\'t\(\))|mul\((\d{1,3})\,(\d{1,3})\)'
 
 matches = regex.findall(search_regex,memory)
 
