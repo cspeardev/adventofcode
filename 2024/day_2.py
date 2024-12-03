@@ -4,20 +4,12 @@ import os
 import time
 
 def is_reading_set_safe(reading_set: list[int]) -> bool:
-  is_safe = True
   if len(reading_set) == 1:
-    return is_safe
-  last_value:int = reading_set[0]
+    return True
+  last_value = reading_set[0]
 
-  increasing = False
-  decreasing = False
-
-  if reading_set[0] < reading_set[1]:
-    increasing = True
-  elif reading_set[0] > reading_set[1]:
-    decreasing = True
-  else:
-    return False
+  increasing = reading_set[0] < reading_set[1]
+  decreasing = reading_set[0] > reading_set[1]
 
   for reading in reading_set[1:]:
     diff = reading - last_value
@@ -31,8 +23,7 @@ def is_reading_set_safe(reading_set: list[int]) -> bool:
     if not 1 <= diff <= 3:
       return False
     last_value = reading
-  return is_safe
-
+  return True
 
 # --- Part One
 # Data sets are safe if values are all descending or all ascending and the
