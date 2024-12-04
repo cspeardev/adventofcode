@@ -42,3 +42,25 @@ end_time = time.time()
 elapsed_time = end_time - start_time
 elapsed_time_in_milliseconds = elapsed_time * 1000
 print('Elapsed time for part one: ' + str(elapsed_time_in_milliseconds))
+
+
+# # --- Part Two
+start_time = time.time()
+x_mas_count=0
+
+for y,line in enumerate(lines[1:-1],start=1):
+  for x,character in enumerate(line[1:-1],start=1):
+    if character == 'A':
+      coordinates = [(x+1,y+1), (x+1,y-1), (x-1,y+1), (x-1,y-1)]
+      values = [lines[c[1]][c[0]] for c in coordinates]
+      slices = [''.join([values[i], 'A', values[-(i+1)]]) for i in range(2)]
+
+      if all('MAS' == s or 'SAM' == s for s in slices):
+        x_mas_count += 1
+
+print(f'The solution for part two is {x_mas_count}')
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+elapsed_time_in_milliseconds = elapsed_time * 1000
+print('Elapsed time for part one: ' + str(elapsed_time_in_milliseconds))
