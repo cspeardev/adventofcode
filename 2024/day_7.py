@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''Day 7 of Advent of Code'''
 import itertools
+import math
 import time
 import os
 
@@ -28,22 +29,14 @@ def main():
   print(f'Elapsed time for part 2: {str(part_2_elapsed_time*1000)} ms')
 
 def part_1(puzzle_input:str):
-  solution=0
   parsed_lines = parse_lines(puzzle_input)
-  for result,numbers in parsed_lines:
-    operator_count=len(numbers)-1
-    operator_permutations=get_permutations(operator_count)
-    for operator_set in operator_permutations:
-      operator_set_result = numbers[0]
-      for operator_index,operator in enumerate(operator_set):
-        if operator == '+':
-          operator_set_result += numbers[operator_index+1]
-        elif operator == '*':
-          operator_set_result *= numbers[operator_index+1]
-      if operator_set_result == result:
-        solution += operator_set_result
-        break
-  return solution
+  operators = {'+': lambda x, y: x + y, '*': lambda x, y: x * y}
+  return process_readings(parsed_lines, operators)
+
+def part_2(puzzle_input):
+  parsed_lines = parse_lines(puzzle_input)
+  operators = {'+': lambda x, y: x + y, '*': lambda x, y: x * y, '||': concatenate_int}
+  return process_readings(parsed_lines, operators)
 
 def parse_lines(puzzle_input) -> set[tuple[int, tuple[int]]]:
   parsed_lines=set()
@@ -55,13 +48,28 @@ def parse_lines(puzzle_input) -> set[tuple[int, tuple[int]]]:
     parsed_lines.add(parsed_line)
   return parsed_lines
 
-def part_2(puzzle_input):
-  return 0
+def process_readings(parsed_lines, operators):
+  solution = 0
+  for result,numbers in parsed_lines:
+    operator_count=len(numbers)-1
+    operator_permutations=get_permutations(operator_count,operators)
+    for operator_set in operator_permutations:
+      operator_set_result = numbers[0]
+      for operator_index,operator in enumerate(operator_set):
+        right_operand = numbers[operator_index+1]
+        operator_set_result = operators[operator](operator_set_result,right_operand)
+      if operator_set_result == result:
+        solution += operator_set_result
+        break
+  return solution
 
+def concatenate_int(left:int, right:int):
+  spaces_count = int(math.log10(right)) + 1
+  left *= 10**spaces_count
+  return left + right
 
-def get_permutations(length):
-  base = ['+', '*']
-  return [list(p) for p in itertools.product(base, repeat=length)]
+def get_permutations(length,base:tuple[str]):
+  return set((p) for p in itertools.product(base, repeat=length))
 
 if __name__ == '__main__':
   main()
