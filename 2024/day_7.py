@@ -35,7 +35,9 @@ def part_1(puzzle_input:str):
 
 def part_2(puzzle_input):
   parsed_lines = parse_lines(puzzle_input)
-  operators = {'+': lambda x, y: x + y, '*': lambda x, y: x * y, '||': concatenate_int}
+  operators = {'+': lambda x, y: x + y,
+               '*': lambda x, y: x * y,
+               '||': concatenate_int}
   return process_readings(parsed_lines, operators)
 
 def parse_lines(puzzle_input) -> set[tuple[int, tuple[int]]]:
@@ -57,7 +59,8 @@ def process_readings(parsed_lines, operators):
       operator_set_result = numbers[0]
       for operator_index,operator in enumerate(operator_set):
         right_operand = numbers[operator_index+1]
-        operator_set_result = operators[operator](operator_set_result,right_operand)
+        operator_set_result = operators[operator](operator_set_result,
+                                                  right_operand)
       if operator_set_result == result:
         solution += operator_set_result
         break
