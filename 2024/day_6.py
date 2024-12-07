@@ -6,22 +6,27 @@ import os
 
 def walk_obstacles(width, height, start, obstacles):
   visited_positions=set()
+  visited_positions_w_direction=set()
   directions=deque([(-1,0),(0,1),(1,0),(0,-1)])
   current_direction = directions[0]
   current_position = start
   next_position=current_position
-  while(0 <= next_position[0] <= width
-    and 0 <= next_position[1] <= height):
+  while(0 <= current_position[0] < width
+    and 0 <= current_position[1] < height):
     if current_position not in visited_positions:
       visited_positions.add(current_position)
-    if next_position in obstacles:
+    if (current_position,current_direction) not in visited_positions_w_direction:
+      visited_positions_w_direction.add((current_position,current_direction))
+    else:
+      return []
+    next_position = (current_position[0]+current_direction[0],
+                  current_position[1]+current_direction[1])
+    while next_position in obstacles:
       directions.rotate(-1)
       current_direction=directions[0]
       next_position = (current_position[0]+current_direction[0],
                   current_position[1]+current_direction[1])
     current_position = next_position
-    next_position = (current_position[0]+current_direction[0],
-                  current_position[1]+current_direction[1])
   return visited_positions
 
 def walk_obstacles_find_loop(width:int,
@@ -63,13 +68,13 @@ def main():
   part_1_elapsed_time = part_1_end_time - part_1_start_time
   print(f'Elapsed time for part 1: {str(part_1_elapsed_time*1000)} ms')
 
-  # part_2_start_time = time.time()
-  # part_2_solution = part_2(lines)
-  # part_2_end_time = time.time()
-  # print(f'Solution for part 2: {part_2_solution}')
+  part_2_start_time = time.time()
+  part_2_solution = part_2(lines)
+  part_2_end_time = time.time()
+  print(f'Solution for part 2: {part_2_solution}')
 
-  # part_2_elapsed_time = part_2_end_time - part_2_start_time
-  # print(f'Elapsed time for part 2: {str(part_2_elapsed_time*1000)} ms')
+  part_2_elapsed_time = part_2_end_time - part_2_start_time
+  print(f'Elapsed time for part 2: {str(part_2_elapsed_time*1000)} ms')
 
 
 def part_1(lines):
@@ -90,18 +95,16 @@ def part_2(lines):
   solution=0
   starting_position = find_starting_position(lines)
   obstacle_coordinates = find_obstacles(lines)
-
   lines_width=len(lines[0])
   lines_height=len(lines)
 
-  for i,line in enumerate(lines):
-    for j,letter in enumerate (line):
-      if (i,j) not in obstacle_coordinates and (i,j) != starting_position:
-        temp_obstacle_coordinates = obstacle_coordinates.copy()
-        temp_obstacle_coordinates.add((i,j))
-        if walk_obstacles_find_loop(lines_width, lines_height, starting_position, temp_obstacle_coordinates):
-          solution += 1
-
+  default_path = walk_obstacles(lines_width,lines_height,starting_position,obstacle_coordinates)
+  for (j,i) in default_path:
+    if (j,i) not in obstacle_coordinates and (j,i) != starting_position:
+      temp_obstacle_coordinates = obstacle_coordinates.copy()
+      temp_obstacle_coordinates.add((j,i))
+      if walk_obstacles(lines_width, lines_height, starting_position, temp_obstacle_coordinates) == []:
+        solution += 1
   return solution
 
 def find_starting_position(lines):
@@ -120,6 +123,3 @@ def find_obstacles(lines):
 
 if __name__ == '__main__':
   main()
-
-
-#1650 is wrong
