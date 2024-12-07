@@ -1,56 +1,61 @@
 #!/usr/bin/env python3
 '''Day one of Advent of Code'''
 from collections import defaultdict
-import os
+import utilities
 import time
+import pyperf
 
-# --- Part One
-start_time = time.time()
+def part_1(input_file_content:str):
+  first_array = []
+  second_array = []
 
-script_dir = os.path.dirname(__file__)
-input_file_path = script_dir + '/input/1'
-
-first_array = []
-second_array = []
-
-with open(input_file_path,encoding='utf-8') as input_file:
-  lines = [line for line in input_file]
+  lines = input_file_content.splitlines()
   first_array = [int(line[0:5]) for line in lines]
   second_array = [int(line[-5:]) for line in lines]
 
-first_array.sort()
-second_array.sort()
+  first_array.sort()
+  second_array.sort()
 
-pairs = zip(first_array,second_array)
+  pairs = zip(first_array,second_array)
 
-diffs = (abs(pair[0] - pair[1]) for pair in pairs)
+  diffs = (abs(pair[0] - pair[1]) for pair in pairs)
 
-sum_of_diffs = sum(diffs)
+  return sum(diffs)
 
-print('Solution for part one is ' + str(sum_of_diffs))
+def part_2(input_file_content:str):
+  lines = input_file_content.splitlines()
+  first_array = [int(line[0:5]) for line in lines]
+  second_array = [int(line[-5:]) for line in lines]
+  multiplied_numbers = []
 
-end_time = time.time()
-elapsed_time = end_time - start_time
-elapsed_time_in_milliseconds = elapsed_time * 1000
-print('Elapsed time for part one: ' + str(elapsed_time_in_milliseconds))
+  count_dict = defaultdict(int)
+  for num in second_array:
+    count_dict[num] += 1
 
-# --- Part Two
-start_time = time.time()
+  for num in first_array:
+    multiplied_numbers.append(num * count_dict[num])
 
-multiplied_numbers = []
+  return sum(multiplied_numbers)
 
-count_dict = defaultdict(int)
-for num in second_array:
-  count_dict[num] += 1
+def main():
+  input_file_content = utilities.get_input_file_content()
 
-for num in first_array:
-  multiplied_numbers.append(num * count_dict[num])
+  part_1_start_time = time.time()
+  part_1_solution=part_1(input_file_content)
+  part_1_end_time = time.time()
 
-similarity_score = sum(multiplied_numbers)
+  print(f'Solution for part 1: {part_1_solution}')
+  part_1_elapsed_time = part_1_end_time - part_1_start_time
+  print(f'Elapsed time for part 1: {str(part_1_elapsed_time*1000)}')
 
-print('Solution for part two is ' + str(similarity_score))
+  part_2_start_time = time.time()
+  part_2_solution=part_2(input_file_content)
+  part_2_end_time = time.time()
 
-end_time = time.time()
-elapsed_time = end_time - start_time
-elapsed_time_in_milliseconds = elapsed_time * 1000
-print('Elapsed time for part two: ' + str(elapsed_time_in_milliseconds))
+  print(f'Solution for part 2: {part_2_solution}')
+  part_2_elapsed_time = part_2_end_time - part_2_start_time
+  print(f'Elapsed time for part 2: {str(part_2_elapsed_time*1000)}')
+
+if __name__ == '__main__':
+  main()
+
