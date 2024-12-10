@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-'''Day two of Advent of Code'''
-import os
+'''Day 2 of Advent of Code'''
 import time
+import utilities
 
 def is_reading_set_safe(reading_set: list[int]) -> bool:
   if len(reading_set) == 1:
@@ -25,44 +25,39 @@ def is_reading_set_safe(reading_set: list[int]) -> bool:
     last_value = reading
   return True
 
-# --- Part One
-# Data sets are safe if values are all descending or all ascending and the
-# difference between each value is between 1 and 3. Solution is to find the
-# count of all readings that are safe.
-
-start_time = time.time()
-
-script_dir = os.path.dirname(__file__)
-input_file_path = script_dir + '/input/2'
-
-readings = [[]]
-
-with open(input_file_path,encoding='utf-8') as input_file:
-  lines = [line.strip() for line in input_file]
+def part_1(input_file_content:str):
+  lines = input_file_content.splitlines()
   readings = [[int(value) for value in str.split(line,' ')] for line in lines]
 
-safe_count = sum(is_reading_set_safe(reading) for reading in readings.copy())
-print(f"Solution for part one is {safe_count}")
+  return sum(is_reading_set_safe(reading) for reading in readings.copy())
 
-end_time = time.time()
-elapsed_time = end_time - start_time
-elapsed_time_in_milliseconds = elapsed_time * 1000
-print('Elapsed time for part one: ' + str(elapsed_time_in_milliseconds))
+def part_2(input_file_content:str):
+  lines = input_file_content.splitlines()
+  readings = frozenset(tuple(int(value) for value in str.split(line,' ')) for line in lines)
+  return sum(is_reading_set_safe(reading)
+             or any(is_reading_set_safe([v for i,
+                                         v in enumerate(reading) if i != j])
+                                         for j in range(len(reading)))
+                                         for reading in readings)
 
-# --- Part Two
-# Same logic as above, however need to implement a 'Problem Dampener', which
-# allows for a single bad reading in a set.
-start_time = time.time()
+def main():
+  input_file_content = utilities.get_input_file_content()
 
-safe_count = sum(is_reading_set_safe(reading)
-                 or any(is_reading_set_safe([v for i,
-                                             v in enumerate(reading) if i != j])
-                                             for j in range(len(reading)))
-                                             for reading in readings)
+  part_1_start_time = time.time()
+  part_1_solution=part_1(input_file_content)
+  part_1_end_time = time.time()
 
-print(f"Solution for part two is {safe_count}")
+  print(f'Solution for part 1: {part_1_solution}')
+  part_1_elapsed_time = part_1_end_time - part_1_start_time
+  print(f'Elapsed time for part 1: {str(part_1_elapsed_time*1000)}')
 
-end_time = time.time()
-elapsed_time = end_time - start_time
-elapsed_time_in_milliseconds = elapsed_time * 1000
-print('Elapsed time for part two: ' + str(elapsed_time_in_milliseconds))
+  part_2_start_time = time.time()
+  part_2_solution=part_2(input_file_content)
+  part_2_end_time = time.time()
+
+  print(f'Solution for part 2: {part_2_solution}')
+  part_2_elapsed_time = part_2_end_time - part_2_start_time
+  print(f'Elapsed time for part 2: {str(part_2_elapsed_time*1000)}')
+
+if __name__ == '__main__':
+  main()

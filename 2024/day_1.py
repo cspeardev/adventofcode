@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Day one of Advent of Code'''
+'''Day 1 of Advent of Code'''
 from collections import defaultdict
 import utilities
 import time

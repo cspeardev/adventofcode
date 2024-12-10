@@ -1,54 +1,48 @@
 #!/usr/bin/env python3
 '''Day three of Advent of Code'''
-import os
 import time
 import regex
+import utilities
 
-# --- Part One
-# Extract multiply functions from corrupted string. Multiply functions will be
-# in the form of 'mul(x,x)'
+def part_1(input_file_content):
+  lines = input_file_content.splitlines()
+  memory = '\n'.join([line.strip() for line in lines])
+  search_regex = r'mul\((\d{1,3})\,(\d{1,3})\)'
+  matches = regex.findall(search_regex,memory)
+  return sum(int(val1) * int(val2) for val1,val2 in matches)
 
-start_time = time.time()
+def part_2(input_file_content):
+  memory = input_file_content
+  search_regex = r'(do\(\)|don\'t\(\))|mul\((\d{1,3})\,(\d{1,3})\)'
+  matches = regex.findall(search_regex,memory)
+  active = True
+  solution = 0
+  for match_type, value1, value2 in matches:
+    if match_type:
+      active = match_type == 'do()'
+    else:
+      if active:
+        solution += int(value1) * int(value2)
+  return solution
 
-script_dir = os.path.dirname(__file__)
-input_file_path = script_dir + '/input/3'
+def main():
+  input_file_content = utilities.get_input_file_content()
 
-with open(input_file_path,encoding='utf-8') as input_file:
-  memory = '\n'.join([line.strip() for line in input_file])
+  part_1_start_time = time.time()
+  part_1_solution=part_1(input_file_content)
+  part_1_end_time = time.time()
 
-search_regex = r'mul\((\d{1,3})\,(\d{1,3})\)'
+  print(f'Solution for part 1: {part_1_solution}')
+  part_1_elapsed_time = part_1_end_time - part_1_start_time
+  print(f'Elapsed time for part 1: {str(part_1_elapsed_time*1000)}')
 
-matches = regex.findall(search_regex,memory)
+  part_2_start_time = time.time()
+  part_2_solution=part_2(input_file_content)
+  part_2_end_time = time.time()
 
-solution = sum([int(val1) * int(val2) for val1,val2 in matches ])
+  print(f'Solution for part 2: {part_2_solution}')
+  part_2_elapsed_time = part_2_end_time - part_2_start_time
+  print(f'Elapsed time for part 2: {str(part_2_elapsed_time*1000)}')
 
-print (f'Solution for part one is: {solution}')
-
-end_time = time.time()
-elapsed_time = end_time - start_time
-elapsed_time_in_milliseconds = elapsed_time * 1000
-print('Elapsed time for part one: ' + str(elapsed_time_in_milliseconds))
-
-# --- Part Two
-# Same as above but identify 'do' or 'don't' in memory before operations
-
-search_regex = r'(do\(\)|don\'t\(\))|mul\((\d{1,3})\,(\d{1,3})\)'
-
-matches = regex.findall(search_regex,memory)
-
-active = True
-solution = 0
-
-for match_type, value1, value2 in matches:
-  if match_type:
-    active = match_type == 'do()'
-  else:
-    if active:
-      solution += int(value1) * int(value2)
-
-print (f'Solution for part two is: {solution}')
-
-end_time = time.time()
-elapsed_time = end_time - start_time
-elapsed_time_in_milliseconds = elapsed_time * 1000
-print('Elapsed time for part two: ' + str(elapsed_time_in_milliseconds))
+if __name__ == '__main__':
+  main()
