@@ -64,33 +64,6 @@ def find_empty_spans(blocks):
   result.append(temp)
   return result
 
-
-def find_empty_span(blocks,size):
-  length=1
-  for i, value in enumerate(blocks):
-    if isinstance(value, int) and value == -1:
-      start = i
-      while i+1 < len(blocks) and blocks[i+1]==-1:
-        i += 1
-      length = i - start + 1
-      if length >= size:
-        return start
-  return -1
-
-def get_file_block_indexes(blocks,file_start_index):
-  file_indexes = []
-  value = blocks[file_start_index]
-  reversed_start_index = len(blocks)-1-file_start_index
-  blocks_reversed = blocks.copy()
-  blocks_reversed.reverse()
-  length = 1
-  for block in blocks_reversed[reversed_start_index+1:]:
-    if block == value:
-      length += 1
-  for i in range(length):
-    file_indexes.append(file_start_index-i)
-  return file_indexes
-
 def parse_blocks(input_file_content):
   blocks=[]
   block_id = 0
