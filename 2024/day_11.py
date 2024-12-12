@@ -1,43 +1,48 @@
 #!/usr/bin/env python3
 '''Day 9 of Advent of Code'''
-from collections import deque
-from itertools import chain
-import math
-
-import numpy
 import utilities
 import time
-import asyncio
-
 def part_1(input_file_content:str):
-  stones=deque([int(stone) for stone in input_file_content.split(' ')])
-  for _ in range(25):
-    stones=asyncio.run(blink(stones))
-  return len(stones)
+  return process_stones(input_file_content,25)
 
 def part_2(input_file_content:str):
-  stones=deque([int(stone) for stone in input_file_content.split(' ')])
-  for _ in range(75):
-    stones=asyncio.run(blink(stones))
-  return len(stones)
+  return process_stones(input_file_content,75)
 
-async def blink(stones:tuple[int])->tuple[int]:
-  tasks = [asyncio.create_task(transform_stone(stone)) for stone in stones]
-  results = await asyncio.gather(*tasks)
-  blinked_stones = tuple(chain.from_iterable(results))
-  return blinked_stones
+def process_stones(input_file_content,count):
+  stones=[(int(stone),1) for stone in input_file_content.split(' ')]
+  stones=consolidate_stones(stones)
+  for _ in range(count):
+    stones=blink(stones)
+  solution=sum(count for _,count in stones)
+  return solution
 
-async def transform_stone(stone:int)->tuple[int]:
-  if stone == 0:
-    return (1,)
-  else:
-    stone_str=str(stone)
-    stone_str_len=len(stone_str)
+def consolidate_stones(tuples:list[tuple[int]]):
+  tuples.sort()
+  consolidated_dict = {}
+  for t in tuples:
+    if t[0] not in consolidated_dict:
+      consolidated_dict[t[0]] = t[1]
+    else:
+      consolidated_dict[t[0]] += t[1]
+  consolidated_tuples = [(k, v) for k, v in consolidated_dict.items()]
+  return consolidated_tuples
+
+def blink(stones:list[tuple[int]])->list[tuple[int]]:
+  stones = consolidate_stones(stones)
+  blinked_stones=[()]*0
+  for stone_value,stone_count in stones:
+    if stone_value==0:
+      blinked_stones.append((1,stone_count))
+      continue
+    stone_str = str(stone_value)
+    stone_str_len = len(stone_str)
     if stone_str_len%2==0:
       midpoint = stone_str_len // 2
-      return(int(stone_str[:midpoint]), int(stone_str[midpoint:]))
-    else:
-      return(stone*2024,)
+      blinked_stones.append((int(stone_str[:midpoint]),stone_count))
+      blinked_stones.append((int(stone_str[midpoint:]),stone_count))
+      continue
+    blinked_stones.append((stone_value*2024,stone_count))
+  return blinked_stones
 
 def main():
   input_file_content = utilities.get_input_file_content()
