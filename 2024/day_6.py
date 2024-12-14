@@ -29,30 +29,6 @@ def walk_obstacles(width, height, start, obstacles):
     current_position = next_position
   return visited_positions
 
-def walk_obstacles_find_loop(width:int,
-                             height:int,
-                             start:tuple[int,int],
-                             obstacles:set[tuple[int,int]]):
-  visited_positions=set()
-  directions=deque([(-1,0),(0,1),(1,0),(0,-1)])
-  current_direction = directions[0]
-  current_position = start
-  while(0 <= current_position[1] <= width
-    and 0 <= current_position [0] <= height):
-    next_position = (current_position[0]+current_direction[0],
-                  current_position[1]+current_direction[1])
-    if next_position in obstacles:
-      directions.rotate(-1)
-      current_direction=directions[0]
-      next_position = (current_position[0]+current_direction[0],
-                  current_position[1]+current_direction[1])
-    current_position = next_position
-    if (next_position,current_direction) in visited_positions:
-      return True
-    if current_position not in visited_positions:
-      visited_positions.add((current_position,current_direction))
-  return False
-
 def main():
   script_dir = os.path.dirname(__file__)
   input_file_path = script_dir + '/input/6'
@@ -99,10 +75,10 @@ def part_2(lines):
   lines_height=len(lines)
 
   default_path = walk_obstacles(lines_width,lines_height,starting_position,obstacle_coordinates)
-  for (j,i) in default_path:
-    if (j,i) not in obstacle_coordinates and (j,i) != starting_position:
+  for (i,j) in default_path:
+    if (i,j) not in obstacle_coordinates and (i,j) != starting_position:
       temp_obstacle_coordinates = obstacle_coordinates.copy()
-      temp_obstacle_coordinates.add((j,i))
+      temp_obstacle_coordinates.add((i,j))
       if walk_obstacles(lines_width, lines_height, starting_position, temp_obstacle_coordinates) == []:
         solution += 1
   return solution
