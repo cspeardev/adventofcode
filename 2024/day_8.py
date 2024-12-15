@@ -17,13 +17,39 @@ def part_1(input_file_content:str):
           if antenna==temp_antenna:
             continue
           antinode=get_next_point(antenna,temp_antenna)
-          if 0 < antinode[1] <= width-1 and 0 < antinode[0] <=  height-1:
+          if is_antinode_valid(width, height, antinode):
             if antinode not in antinodes:
               antinodes.add(antinode)
   return len(antinodes)
 
+def is_antinode_valid(width, height, antinode):
+  return 0 < antinode[1] <= width-1 and 0 < antinode[0] <=  height-1
+
 def part_2(input_file_content:str):
-  return 0
+  lines = input_file_content.splitlines()
+  antinodes=set()
+  all_antennas=find_antennas(lines)
+  width=len(lines[0])+1
+  height=len(lines)+1
+
+  for frequency_antennas in all_antennas.values():
+    if len(frequency_antennas) > 1:
+      for antenna in frequency_antennas:
+        if antenna not in antinodes:
+          antinodes.add(antenna)
+        for temp_antenna in frequency_antennas:
+          if antenna==temp_antenna:
+            continue
+          point1 = antenna
+          point2 = temp_antenna
+          antinode=get_next_point(point1,point2)
+          while is_antinode_valid(width, height, antinode):
+            if antinode not in antinodes:
+              antinodes.add(antinode)
+            point1=point2
+            point2=antinode
+            antinode=get_next_point(point1,point2)
+  return len(antinodes)
 
 def get_next_point(point1,point2):
   x1, y1 = point1
