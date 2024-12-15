@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Day six of Advent of Code'''
+'''Day 6 of Advent of Code'''
 from collections import deque
 import time
 import os
