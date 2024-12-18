@@ -5,12 +5,15 @@ from typing import Dict
 import utilities
 import time
 
-def load_registers(input_file_content,letter):
+def load_registers(input_file_content):
+  registers={}
   register_regex=r'Register {}: (\d*)$'
-  register = re.findall(register_regex.format(letter),
+  for val in ['A','B','C']:
+    register = int(re.findall(register_regex.format(val),
                         input_file_content,
-                        re.M)[0]
-  return int(register)
+                        re.M)[0])
+    registers[val]=register
+  return registers
 
 def load_program(input_file_contnet):
   program_regex=r'Program: (.*)$'
@@ -66,12 +69,13 @@ def cdv(registers:Dict[str,int],operand:int):
   registers['C']=int(product)
 
 def part_1(input_file_content:str):
-  instruction_pointer=0
-  registers={}
-  registers['A']=load_registers(input_file_content,'A')
-  registers['B']=load_registers(input_file_content,'B')
-  registers['C']=load_registers(input_file_content,'C')
+  registers=load_registers(input_file_content)
   program = load_program(input_file_content)
+  program_output=run_program(registers,program)
+  return ','.join(str(val) for val in program_output)
+
+def run_program(registers,program):
+  instruction_pointer=0
   output = []
   while 0 <= instruction_pointer <= len(program)-1:
     opcode=program[instruction_pointer]
@@ -97,7 +101,7 @@ def part_1(input_file_content:str):
       case 7:
         cdv(registers,operand)
     instruction_pointer+=2
-  return ','.join(str(val) for val in output)
+  return output
 
 def part_2(input_file_content:str):
   return 0
